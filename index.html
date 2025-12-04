@@ -145,12 +145,7 @@
      style="position:fixed; top:0; left:0; width:80px; opacity:0.9; z-index:9999; pointer-events:none;">
 
 
-    <div id="adminPanel" class="hidden bg-yellow-100 border-b border-yellow-200">
-        <div class="max-w-7xl mx-auto px-4 py-2 flex justify-between items-center">
-            <span class="text-yellow-800 font-medium">โหมดผู้ดูแล</span>
-            <button onclick="logout()" class="text-yellow-800 hover:text-yellow-900 font-medium">ออกจากระบบ</button>
-        </div>
-    </div>
+    
 
     <main id="mainContent">
         <div id="homePage" class="page">
@@ -170,7 +165,7 @@
                     <p class="text-lg text-gray-600 mb-10 max-w-2xl mx-auto leading-relaxed">รักสามัคคี ซื่อสัตย์สุจริต รับผิดชอบ สู่จิตสาธารณะ</p>
                     <div class="flex flex-wrap justify-center gap-4">
                         <button onclick="showPage('terms')" class="bg-gradient-to-r from-purple-600 to-blue-600 text-white px-8 py-3 rounded-xl text-lg hover:from-purple-700 hover:to-blue-700 transform hover:scale-105 transition-all duration-300 shadow-lg pulse-glow">ข้อกำหนดการใช้งาน</button>
-                        <button onclick="showPage('contacts')" class="bg-white text-gray-700 px-8 py-3 rounded-xl text-lg hover:bg-gray-50 transform hover:scale-105 transition-all duration-300 shadow-lg border border-gray-200">ติดต่อเรา</button>
+                        <button onclick="showPage('contact')" class="bg-white text-gray-700 px-8 py-3 rounded-xl text-lg hover:bg-gray-50 transform hover:scale-105 transition-all duration-300 shadow-lg border border-gray-200">ติดต่อเรา</button>
                     </div>
                 </div>
             </section>
@@ -527,122 +522,104 @@
 
 
    <script>
-    // Firebase Configuration
-    
+    // ----------------------------------------------------------------------
+    // Navigation Functions
+    // ----------------------------------------------------------------------
+    function showPage(pageId) {
+        // 1. อัปเดต URL Hash
+        const currentHash = window.location.hash.substring(1);
+        if (currentHash !== pageId) {
+            history.pushState(null, null, '#' + pageId);
+        }
 
+        // กำหนดคลาสสำหรับ Active/Inactive
+        const mobileActiveClasses = ['text-blue-600', 'font-semibold', 'bg-blue-100'];
+        const mobileInactiveClasses = ['text-gray-600', 'hover:text-gray-900', 'hover:bg-gray-50'];
 
-// ----------------------------------------------------------------------
-// Navigation Functions (แก้ไขเพื่อเพิ่ม URL HASH) 🚀
-// ----------------------------------------------------------------------
-function showPage(pageId) {
-    // 7. (ใหม่) อัปเดต URL Hash โดยใช้ history.pushState เพื่อไม่ให้หน้ากระโดด
-    const currentHash = window.location.hash.substring(1);
-    if (currentHash !== pageId) {
-        history.pushState(null, null, '#' + pageId);
-    }
-    
-    // กำหนดคลาสสำหรับ Mobile Menu
-    const mobileActiveClasses = 'text-blue-600 font-semibold bg-blue-100';
-    const mobileInactiveClasses = 'text-gray-600 hover:text-gray-900 hover:bg-gray-50';
+        const desktopActiveClasses = ['text-purple-600', 'font-semibold', 'border-b-2', 'border-purple-600'];
+        const desktopInactiveClasses = ['text-gray-600', 'border-b-2', 'border-transparent', 'hover:border-gray-300'];
 
-    // กำหนดคลาสสำหรับ Desktop Menu (nav-btn)
-    const desktopActiveClasses = 'text-purple-600 font-semibold border-b-2 border-purple-600'; 
-    const desktopInactiveClasses = 'text-gray-600 border-b-2 border-transparent hover:border-gray-300'; 
-
-    // 1. Hide all pages
-    document.querySelectorAll('.page').forEach(page => {
-        page.classList.add('hidden');
-    });
-    
-    // 2. Show selected page
-    const targetPage = document.getElementById(pageId + 'Page');
-    if (targetPage) {
-        targetPage.classList.remove('hidden');
-        targetPage.classList.add('fade-in'); 
-    }
-    
-    // 3. Update navigation - Reset all buttons (Desktop & Mobile)
-
-    // Reset Desktop Buttons (nav-btn) - คาดว่าใน HTML ถูกเปลี่ยนเป็น <a> แล้ว
-    document.querySelectorAll('.nav-btn').forEach(btn => {
-        btn.classList.remove(...desktopActiveClasses.split(' '));
-        btn.classList.add(...desktopInactiveClasses.split(' '));
-    });
-
-    // Reset Mobile Buttons (mobile-nav-btn) - คาดว่าใน HTML ถูกเปลี่ยนเป็น <a> แล้ว
-    document.querySelectorAll('.mobile-nav-btn').forEach(btn => {
-        btn.classList.remove(...mobileActiveClasses.split(' '));
-        btn.classList.add(...mobileInactiveClasses.split(' '));
-    });
-    
-    // 4. Highlight active page button
-
-    // Highlight active buttons (Desktop: nav-btn) โดยใช้ href attribute
-    const activeDesktopButton = document.querySelector(`.nav-btn[href="#${pageId}"]`);
-    if (activeDesktopButton) {
-        activeDesktopButton.classList.remove(...desktopInactiveClasses.split(' '));
-        activeDesktopButton.classList.add(...desktopActiveClasses.split(' '));
-    }
-
-    // Highlight active buttons (Mobile: mobile-nav-btn) โดยใช้ href attribute
-    const activeMobileButton = document.querySelector(`.mobile-nav-btn[href="#${pageId}"]`);
-    if (activeMobileButton) {
-        activeMobileButton.classList.remove(...mobileInactiveClasses.split(' '));
-        activeMobileButton.classList.add(...mobileActiveClasses.split(' '));
-    }
-    
-    // 5. Load page content
-    
-    
-    // 6. Hide mobile menu
-    document.getElementById('mobileMenu').classList.add('hidden');
-    setTimeout(() => { window.scrollTo(0, 0); }, 50);
-}
-
-function toggleMobileMenu() {
-    const menu = document.getElementById('mobileMenu');
-    menu.classList.toggle('hidden');
-}
-        // Authentication Functions
-
-
-        // Utility Functions
-        
-
-        
-
-        // ----------------------------------------------------------------------
-        // Initialize (แก้ไขในส่วนนี้) ✨
-        // ----------------------------------------------------------------------
-        document.addEventListener('DOMContentLoaded', function() {
-            // ตรวจสอบว่ามี Hash ใน URL หรือไม่เมื่อหน้าโหลดครั้งแรก
-            const initialHash = window.location.hash.substring(1);
-            const defaultPage = 'home';
-            
-            let pageToLoad = defaultPage;
-
-            // หากมี Hash และ Hash นั้นไม่ใช่ค่าว่าง
-            if (initialHash) {
-                pageToLoad = initialHash;
-            } else {
-                // หากไม่มี Hash ให้ใส่ Hash ของหน้าเริ่มต้นใน URL โดยไม่บันทึกประวัติการเข้าชม
-                history.replaceState(null, null, '#' + defaultPage);
-            }
-
-            showPage(pageToLoad);
-            
-        
-        // (ใหม่) เพิ่ม Event Listener สำหรับปุ่ม Back/Forward ของเบราว์เซอร์
-        window.addEventListener('popstate', function(event) {
-            const pageHash = window.location.hash.substring(1) || 'home';
-            showPage(pageHash);
+        // 2. ซ่อนทุกหน้า (.page)
+        document.querySelectorAll('.page').forEach(page => {
+            page.classList.add('hidden');
+            page.classList.remove('fade-in'); // Reset animation hook if needed
         });
 
-        // ฟังก์ชันสำหรับเปิด Modal
-      
+        // 3. แสดงหน้าที่เลือก
+        const targetPage = document.getElementById(pageId + 'Page');
+        if (targetPage) {
+            targetPage.classList.remove('hidden');
+            targetPage.classList.add('fade-in');
+        } else {
+            // กรณีหาหน้าไม่เจอ ให้กลับไปหน้า home
+            console.warn("Page not found:", pageId);
+            if(pageId !== 'home') showPage('home');
+            return;
+        }
 
-        // ฟังก์ชันสำหรับปิด Modal
+        // 4. Reset ปุ่มเมนูทั้งหมด
+        // Desktop
+        document.querySelectorAll('.nav-btn').forEach(btn => {
+            btn.classList.remove(...desktopActiveClasses);
+            btn.classList.add(...desktopInactiveClasses);
+        });
+        // Mobile
+        document.querySelectorAll('.mobile-nav-btn').forEach(btn => {
+            btn.classList.remove(...mobileActiveClasses);
+            btn.classList.add(...mobileInactiveClasses);
+        });
+
+        // 5. Highlight ปุ่มที่ Active (ตรวจสอบจาก href="#pageId")
+        // Desktop
+        const activeDesktopButton = document.querySelector(`.nav-btn[href="#${pageId}"]`);
+        if (activeDesktopButton) {
+            activeDesktopButton.classList.remove(...desktopInactiveClasses);
+            activeDesktopButton.classList.add(...desktopActiveClasses);
+        }
+        // Mobile
+        const activeMobileButton = document.querySelector(`.mobile-nav-btn[href="#${pageId}"]`);
+        if (activeMobileButton) {
+            activeMobileButton.classList.remove(...mobileInactiveClasses);
+            activeMobileButton.classList.add(...mobileActiveClasses);
+        }
+
+        // 6. ปิดเมนูมือถือ (ถ้าเปิดอยู่) และเลื่อนขึ้นบนสุด
+        document.getElementById('mobileMenu').classList.add('hidden');
+        setTimeout(() => { window.scrollTo(0, 0); }, 50);
+    }
+
+    function toggleMobileMenu() {
+        const menu = document.getElementById('mobileMenu');
+        menu.classList.toggle('hidden');
+    }
+
+    // ----------------------------------------------------------------------
+    // Initialize & Event Listeners
+    // ----------------------------------------------------------------------
+    document.addEventListener('DOMContentLoaded', function() {
+        // ตรวจสอบ URL Hash เมื่อโหลดหน้า
+        const initialHash = window.location.hash.substring(1);
+        const defaultPage = 'home';
         
+        let pageToLoad = defaultPage;
+
+        // ตรวจสอบว่า Hash ที่มีอยู่ เป็นหน้าที่มีจริงหรือไม่
+        if (initialHash && document.getElementById(initialHash + 'Page')) {
+            pageToLoad = initialHash;
+        } else {
+            // ถ้าไม่มี Hash หรือ Hash ผิด ให้ไปหน้า Home
+            history.replaceState(null, null, '#' + defaultPage);
+        }
+
+        showPage(pageToLoad);
+    });
+
+    // รองรับปุ่ม Back/Forward ของ Browser
+    window.addEventListener('popstate', function(event) {
+        const pageHash = window.location.hash.substring(1);
+        // ถ้ามี hash ให้ไปหน้านั้น ถ้าไม่มี (เช่น back จนสุด) ให้ไป home
+        showPage(pageHash || 'home');
+    });
 
 </script>
 </body>
